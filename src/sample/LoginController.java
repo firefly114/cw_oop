@@ -7,12 +7,10 @@ import javafx.fxml.Initializable;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -58,8 +56,11 @@ public class LoginController implements Initializable {
                 Car car = lm.getCar(txt_username.getText());
                 if(car != null) {
                     mc.setCar(car);
+                    if(mc.car.isUpgraded == 1) {
+                        mc.upgrade.setDisable(true);
+                    }
                 }
-                primaryStage.setTitle("Hello World");
+                primaryStage.setTitle("Formula1 Simulator");
                 primaryStage.setScene(new Scene(root));
                 primaryStage.show();
 
@@ -89,6 +90,7 @@ public class LoginController implements Initializable {
             e1.printStackTrace();
         }
     }
+
     public void Signup(ActionEvent e) {
         try {
             if(!lm.isLogin(txt_username.getText(), txt_password.getText())) {
@@ -102,7 +104,7 @@ public class LoginController implements Initializable {
                 User u = lm.getUser(txt_username.getText());
                 mc.setUser(u);
 
-                primaryStage.setTitle("Hello World");
+                primaryStage.setTitle("Formula1 Simulator");
                 primaryStage.setScene(new Scene(root));
                 primaryStage.show();
 

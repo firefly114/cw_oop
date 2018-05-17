@@ -54,29 +54,30 @@ public class MenuModel {
 
     public void updateCar(Car car, String username) throws SQLException {
         PreparedStatement ps = null;
-        String query = "UPDATE Cars SET title = ?, Acceleration = ?, MaxSpeed = ?, Brakes = ?, Tires= ?, Spoiler = ?, Nitro = ? WHERE username = ?";
+        String query = "UPDATE Cars SET title = ?, Acceleration = ?, MaxSpeed = ?, Brakes = ?, Tires= ?, Spoiler = ?, Nitro = ?, isUpgraded = ? WHERE username = ?";
         ps = c.prepareStatement(query);
         ps.setString(1,car.title);
         ps.setDouble(2,car.acceleration);
         ps.setDouble(3,car.maxSpeed);
         ps.setDouble(4,car.brakes);
 
-        if(car.upgrades.contains("Tires"))
+        if(car.upgrades.containsKey("Tires"))
             ps.setInt(5,1);
         else
             ps.setInt(5,0);
 
-        if(car.upgrades.contains("Spoiler"))
+        if(car.upgrades.containsKey("Spoiler"))
             ps.setInt(6,1);
         else
             ps.setInt(6,0);
 
-        if(car.upgrades.contains("Nitro"))
+        if(car.upgrades.containsKey("Nitro"))
             ps.setInt(7,1);
         else
             ps.setInt(7,0);
 
-        ps.setString(8,username);
+        ps.setInt(8,car.isUpgraded);
+        ps.setString(9,username);
         try {
             ps.executeUpdate();
             ps.close();

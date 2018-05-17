@@ -6,7 +6,6 @@ public class User {
 
     public double money = 0;
     public double moneyOnPush = 0.2;
-    public Car currentCar;
 
     public User(String username, int id, double money, double moneyOnPush) {
         this.username = username;

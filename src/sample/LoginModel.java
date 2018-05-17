@@ -1,6 +1,8 @@
 package sample;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class LoginModel {
     Connection c;
@@ -73,17 +75,20 @@ public class LoginModel {
         String query = "SELECT * FROM Cars WHERE username = ?";
         ps = c.prepareStatement(query);
         ps.setString(1, username);
-        System.out.println("here0");
         ResultSet rs = ps.executeQuery();
         while ( rs.next() ) {
-            System.out.println("here");
             String title = rs.getString("title");
             double a = rs.getDouble("Acceleration");
             double m = rs.getDouble("MaxSpeed");
             double b = rs.getDouble("Brakes");
+            int u = rs.getInt("isUpgraded");
+            HashMap<String, Upgrades> upg = new HashMap<>();
+            if(rs.getInt("Nitro")==1) upg.put("Nitro",new Nitro());
+            if(rs.getInt("Spoiler")==1) upg.put("Spoiler", new Spoiler());
+            if(rs.getInt("Tires")==1) upg.put("Tires", new Tires());
             rs.close();
             ps.close();
-            return new Car(title,a,m,b);
+            return new Car(title,a,m,b,u, upg);
         }
         return null;
     }
