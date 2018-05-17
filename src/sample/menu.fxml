@@ -17,21 +17,21 @@
       <Button fx:id="getMoney" layoutX="478.0" layoutY="53.0" mnemonicParsing="false" onAction="#incPush" prefHeight="52.0" prefWidth="106.0" text="Get money" />
       <Label layoutX="122.0" layoutY="20.0" prefHeight="16.0" prefWidth="54.0" text="Money:" />
       <Label fx:id="money" layoutX="185.0" layoutY="22.0" prefHeight="15.0" prefWidth="84.0" />
-      <TabPane layoutX="22.0" layoutY="50.0" prefHeight="400.0" prefWidth="434.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane fx:id="tabPane" layoutX="22.0" layoutY="50.0" prefHeight="400.0" prefWidth="434.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Your car">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="359.0" prefWidth="430.0">
                      <children>
                         <ImageView fitHeight="153.0" fitWidth="200.0" layoutX="6.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
-                        <Label fx:id="curCar_title" layoutX="217.0" layoutY="14.0" prefHeight="21.0" prefWidth="186.0" text="Label">
+                        <Label fx:id="curCar_title" layoutX="18.0" layoutY="14.0" prefHeight="21.0" prefWidth="403.0" text="Label">
                            <font>
                               <Font name="System Bold" size="17.0" />
                            </font>
                         </Label>
-                        <ProgressBar fx:id="curCar_acceleration" layoutX="217.0" layoutY="62.0" prefHeight="8.0" prefWidth="200.0" progress="0.0" />
-                        <ProgressBar fx:id="curCar_maxSpeed" layoutX="217.0" layoutY="97.0" prefWidth="200.0" progress="0.0" />
-                        <ProgressBar fx:id="curCar_brakes" layoutX="217.0" layoutY="132.0" prefWidth="200.0" progress="0.0" />
+                        <ProgressBar fx:id="curCar_acceleration" layoutX="170.0" layoutY="62.0" prefHeight="20.0" prefWidth="247.0" progress="0.0" />
+                        <ProgressBar fx:id="curCar_maxSpeed" layoutX="172.0" layoutY="97.0" prefHeight="20.0" prefWidth="245.0" progress="0.0" />
+                        <ProgressBar fx:id="curCar_brakes" layoutX="174.0" layoutY="132.0" prefHeight="20.0" prefWidth="243.0" progress="0.0" />
                         <Label layoutX="217.0" layoutY="47.0" prefHeight="15.0" prefWidth="97.0" text="Acceleration" />
                         <Label layoutX="217.0" layoutY="82.0" text="Max speed" />
                         <Label layoutX="217.0" layoutY="117.0" prefHeight="15.0" prefWidth="54.0" text="Braking" />

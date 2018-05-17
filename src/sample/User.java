@@ -4,14 +4,16 @@ public class User {
     private String username;
     public int id;
 
-    public double money = 0;
-    public double moneyOnPush = 0.2;
+    public double money;
+    public double moneyOnPush;
+    public boolean auth;
 
-    public User(String username, int id, double money, double moneyOnPush) {
+    public User(String username, int id, double money, double moneyOnPush, boolean auth) {
         this.username = username;
         this.id = id;
         this.money = money;
         this.moneyOnPush = moneyOnPush;
+        this.auth = auth;
     }
 
     public String getUsername() {

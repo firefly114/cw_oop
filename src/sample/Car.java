@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Car {
+public abstract class Car {
     public String title;
     //public String pic;
     public double acceleration;
@@ -14,35 +14,27 @@ public class Car {
     public int isUpgraded;
     HashMap<String, Upgrades> upgrades;
 
-    public Car(String title, double acceleration, double maxSpeed, double brakes, int isUpgraded, HashMap<String, Upgrades> upg) {
+    public PointsStrategy st;
+
+    public Car(String title, double acceleration, double maxSpeed, double brakes, int isUpgraded, HashMap<String, Upgrades> upg, PointsStrategy st) {
         this.title = title;
         this.acceleration = acceleration;
         this.maxSpeed = maxSpeed;
         this.brakes = brakes;
         this.isUpgraded = isUpgraded;
         this.upgrades = upg;
+        this.st = st;
     }
 
-    public double rewardForRace() {
-        return CalculateCarPoints()/3;
-    }
-    public double upgradeCost() {
-        return CalculateCarPoints()/1.7;
-    }
+    abstract public double rewardForRace();
+    abstract public double upgradeCost();
+
     public double CalculateCarPoints() {
-        return (acceleration+maxSpeed+brakes)/3;
+        return st.CalculatePoints(acceleration,maxSpeed,brakes);
     }
 
-    public void upgrade() {
-        isUpgraded = 1;
-        acceleration += 10;
-        maxSpeed += 5;
-        brakes += 10;
-    }
-
-    public double price() {
-        return CalculateCarPoints() *2;
-    }
+    abstract public void upgrade();
+    abstract public double price();
 
     public Upgrades GetUpgrades(String key, double money) {
         Upgrades u = null;

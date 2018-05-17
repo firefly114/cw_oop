@@ -65,7 +65,7 @@ public class LoginModel {
             double moneyOP = rs.getDouble("moneyOP");
             rs.close();
             ps.close();
-            return new User(username, id, money, moneyOP);
+            return new User(username, id, money, moneyOP, true);
         }
         return null;
     }
@@ -88,7 +88,9 @@ public class LoginModel {
             if(rs.getInt("Tires")==1) upg.put("Tires", new Tires());
             rs.close();
             ps.close();
-            return new Car(title,a,m,b,u, upg);
+            if(title == "Renault" || title == "Ferrari" || title == "Mercedes" || title == "RedBull")
+            return new StockCar(title,a,m,b,u, upg);
+            else return new SuperCar(title,a,m,b,u, upg);
         }
         return null;
     }

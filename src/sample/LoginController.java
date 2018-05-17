@@ -56,10 +56,15 @@ public class LoginController implements Initializable {
                 Car car = lm.getCar(txt_username.getText());
                 if(car != null) {
                     mc.setCar(car);
+                    mc.setState(new CarState());
                     if(mc.car.isUpgraded == 1) {
                         mc.upgrade.setDisable(true);
                     }
+                } else {
+                    mc.setState(new NoCarState());
                 }
+
+                mc.getState().resetView(mc.toRace,mc.curCar_title);
                 primaryStage.setTitle("Formula1 Simulator");
                 primaryStage.setScene(new Scene(root));
                 primaryStage.show();
@@ -122,5 +127,25 @@ public class LoginController implements Initializable {
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    public void Guest(ActionEvent e) {
+        ((Node)e.getSource()).getScene().getWindow().hide();
+        Stage primaryStage = new Stage();
+        FXMLLoader loader = new FXMLLoader();
+        Pane root = null;
+        try {
+            root = loader.load(getClass().getResource("menu.fxml").openStream());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        MenuController mc = (MenuController)loader.getController();
+
+        User u = new User("Guest",1,0,0.2, false);
+        mc.setUser(u);
+
+        primaryStage.setTitle("Formula1 Simulator");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
     }
 }

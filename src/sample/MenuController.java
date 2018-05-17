@@ -2,6 +2,8 @@ package sample;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,11 +27,11 @@ import javafx.util.Duration;
 
 public class MenuController implements Initializable{
     @FXML
-    private Label user;
+    public Label user;
     @FXML
-    private Label money;
+    public Label money;
     @FXML
-    private Label moneyOP;
+    public Label moneyOP;
     @FXML
     private ListView<String> listView;
     @FXML
@@ -49,7 +51,7 @@ public class MenuController implements Initializable{
     private ProgressBar selCar_brakes;
 
     @FXML
-    private Label curCar_title;
+    public Label curCar_title;
     @FXML
     private Label curCar_Reward;
     @FXML
@@ -86,34 +88,38 @@ public class MenuController implements Initializable{
 
     @FXML
     private Label timeLabel;
+    @FXML
+    private TabPane tabPane;
 
     public MenuModel menuModel = new MenuModel();
     public User u;
     public Car car;
 
-    HashMap<String, Upgrades> empty = new HashMap<>();
-    Car[] cars = new Car[]{new Car("Renault", 20, 40, 30,0, empty),
-            new Car("Ferrari", 30, 50, 15,0, empty),
-            new Car("Mercedes", 20, 40, 30,0, empty),
-            new Car("RedBull", 30, 35, 30,0, empty)};
+    public Car[] cars;
 
+    private State state;
+
+    public void setState(State state){
+        this.state = state;
+    }
+
+    public State getState(){
+        return state;
+    }
+
+    HashMap<String, Upgrades> empty = new HashMap<>();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        listView.getItems().addAll("Renault", "Ferrari", "Mercedes","RedBull");
-        if(car.isUpgraded == 1) {
-            upgrade.setDisable(true);
-        }
+//        if(car.isUpgraded == 1) {
+//            upgrade.setDisable(true);
+//        }
         tiresBtn.setUserData("Tires");
         spoilerBtn.setUserData("Spoiler");
         nitroBtn.setUserData("Nitro");
 
         listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
             @Override
             public void handle(MouseEvent event) {
-
-                //ObservableList<String> list = FXCollections.observableArrayList(c1.name, c2.name, c3.name, c4.name);
-                System.out.println("clicked on " + listView.getSelectionModel().getSelectedItem());
                 for(int i = 0; i < cars.length; i++) {
                     if(cars[i].title.equals(listView.getSelectionModel().getSelectedItem())) {
                         selCar_title.setText(cars[i].title);
@@ -128,26 +134,53 @@ public class MenuController implements Initializable{
                 }
             }
         });
+
+        tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
+                listView.getItems().clear();
+                cars = computeCars();
+            }
+        });
+    }
+
+    public Car[] computeCars() {
+        if(u.moneyOnPush <= 0.21) {
+            listView.getItems().addAll("Renault", "Ferrari", "Mercedes","RedBull");
+            return new StockCar[]{new StockCar("Renault", 20, 40, 30,0, empty),
+                    new StockCar("Ferrari", 30, 50, 15,0, empty),
+                    new StockCar("Mercedes", 20, 40, 30,0, empty),
+                    new StockCar("RedBull", 30, 35, 30,0, empty)};
+        } else {
+            listView.getItems().addAll("Haas", "Williams", "Maclaren","Force India");
+            return new SuperCar[]{new SuperCar("Haas", 40, 40, 35,0, empty),
+                    new SuperCar("Williams", 30, 50, 30,0, empty),
+                    new SuperCar("Maclaren", 45, 40, 30,0, empty),
+                    new SuperCar("Force India", 50, 35, 50,0, empty)};
+        }
     }
 
     public void buyCar(ActionEvent e) {
-        for(int i = 0; i < cars.length; i++) {
-            if(cars[i].title.equals(selCar_title.getText())) {
-                if(u.enough(cars[i].price())) {
+        if(u.auth) {
+            Car[] cars = computeCars();
+            for (int i = 0; i < cars.length; i++) {
+                if (u.enough(cars[i].price()) && cars[i].title.equals(selCar_title.getText())) {
                     u.money -= cars[i].price();
-                    money.setText(Double.toString(round(u.money,2)));
-                    u.moneyOnPush += cars[i].rewardForRace() / (cars[i].upgradeCost()*3);
+                    money.setText(Double.toString(round(u.money, 2)));
+                    u.moneyOnPush += cars[i].rewardForRace() / (cars[i].upgradeCost() * 3);
                     try {
-                        if(car == null)
+                        if (car == null)
                             menuModel.newCar(cars[i], u.getUsername());
                         else
-                            menuModel.updateCar(cars[i],u.getUsername());
+                            menuModel.updateCar(cars[i], u.getUsername());
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
                     setCar(cars[i]);
-                    this.moneyOP.setText(Double.toString(round(u.moneyOnPush,2)));
+                    this.moneyOP.setText(Double.toString(round(u.moneyOnPush, 2)));
                     upgrade.setDisable(false);
+                    setState(new CarState());
+                    getState().resetView(toRace, curCar_title);
                     break;
                 } else {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -157,6 +190,12 @@ public class MenuController implements Initializable{
                     alert.showAndWait();
                 }
             }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText("Login or Sign up please if you want to buy");
+
+            alert.showAndWait();
         }
     }
 
@@ -212,7 +251,7 @@ public class MenuController implements Initializable{
     }
 
     public void incPush(ActionEvent e) {
-        u.money += u.moneyOnPush;
+        u.push();
         this.money.setText(Double.toString(round(u.money,2)));
     }
 
