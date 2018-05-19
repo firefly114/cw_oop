@@ -64,7 +64,7 @@ public class LoginController implements Initializable {
                     mc.setState(new NoCarState());
                 }
 
-                mc.getState().resetView(mc.toRace,mc.curCar_title);
+                mc.getState().resetView(mc.toRace,mc.curCar_title, mc.pane);
                 primaryStage.setTitle("Formula1 Simulator");
                 primaryStage.setScene(new Scene(root));
                 primaryStage.show();
@@ -109,6 +109,7 @@ public class LoginController implements Initializable {
                 User u = lm.getUser(txt_username.getText());
                 mc.setUser(u);
 
+                mc.setState(new NoCarState());
                 primaryStage.setTitle("Formula1 Simulator");
                 primaryStage.setScene(new Scene(root));
                 primaryStage.show();
@@ -143,7 +144,6 @@ public class LoginController implements Initializable {
 
         User u = new User("Guest",1,0,0.2, false);
         mc.setUser(u);
-
         primaryStage.setTitle("Formula1 Simulator");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();

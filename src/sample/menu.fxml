@@ -13,7 +13,7 @@
 <AnchorPane prefHeight="468.0" prefWidth="646.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MenuController">
    <children>
       <Label fx:id="user" layoutX="14.0" layoutY="16.0" prefHeight="22.0" prefWidth="106.0" text="Label" />
-      <Button layoutX="478.0" layoutY="11.0" mnemonicParsing="false" onAction="#Logout" prefHeight="36.0" prefWidth="106.0" text="Sign out" />
+      <Button layoutX="478.0" layoutY="11.0" mnemonicParsing="false" onAction="#Logout" prefHeight="36.0" prefWidth="106.0" text="Exit" />
       <Button fx:id="getMoney" layoutX="478.0" layoutY="53.0" mnemonicParsing="false" onAction="#incPush" prefHeight="52.0" prefWidth="106.0" text="Get money" />
       <Label layoutX="122.0" layoutY="20.0" prefHeight="16.0" prefWidth="54.0" text="Money:" />
       <Label fx:id="money" layoutX="185.0" layoutY="22.0" prefHeight="15.0" prefWidth="84.0" />
@@ -21,7 +21,7 @@
         <tabs>
           <Tab text="Your car">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="359.0" prefWidth="430.0">
+              <AnchorPane fx:id="pane" minHeight="0.0" minWidth="0.0" prefHeight="359.0" prefWidth="430.0">
                      <children>
                         <ImageView fitHeight="153.0" fitWidth="200.0" layoutX="6.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
                         <Label fx:id="curCar_title" layoutX="18.0" layoutY="14.0" prefHeight="21.0" prefWidth="403.0" text="Label">
@@ -79,7 +79,7 @@
       <Button fx:id="toRace" layoutX="476.0" layoutY="161.0" mnemonicParsing="false" onAction="#toRace" prefHeight="64.0" prefWidth="106.0" text="Race" />
       <Label fx:id="moneyOP" layoutX="495.0" layoutY="122.0" />
       <Label fx:id="moneyRace" layoutX="477.0" layoutY="243.0" />
-      <Label fx:id="curCar_Reward" layoutX="511.0" layoutY="236.0" prefHeight="15.0" prefWidth="46.0" />
+      <Label fx:id="curCar_Reward" layoutX="473.0" layoutY="236.0" prefHeight="16.0" prefWidth="116.0" />
       <Label fx:id="timeLabel" layoutX="458.0" layoutY="303.0" prefHeight="16.0" prefWidth="150.0" />
    </children>
 </AnchorPane>

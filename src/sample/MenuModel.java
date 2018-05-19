@@ -12,15 +12,6 @@ public class MenuModel {
         if(c== null) System.exit(1);
     }
 
-    public boolean isDbConnected() {
-        try {
-            return !c.isClosed();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public void updateUser(User u) throws SQLException {
         String query = "UPDATE Users SET money = ?, moneyOP = ? WHERE username = ?";
         PreparedStatement ps = c.prepareStatement(query);

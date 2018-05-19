@@ -11,7 +11,7 @@ public class StockCar extends Car {
         return CalculateCarPoints()/3;
     }
     public double upgradeCost() {
-        return CalculateCarPoints()/1.7;
+        return 35/1.7;
     }
 
     public void upgrade() {
@@ -22,6 +22,6 @@ public class StockCar extends Car {
     }
 
     public double price() {
-        return CalculateCarPoints() *2;
+        return CalculateCarPoints() * 1.5;
     }
 }

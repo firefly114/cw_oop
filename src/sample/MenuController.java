@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -90,12 +91,14 @@ public class MenuController implements Initializable{
     private Label timeLabel;
     @FXML
     private TabPane tabPane;
+    @FXML
+    public AnchorPane pane;
 
     public MenuModel menuModel = new MenuModel();
     public User u;
     public Car car;
 
-    public Car[] cars;
+    private Car[] cars;
 
     private State state;
 
@@ -107,7 +110,10 @@ public class MenuController implements Initializable{
         return state;
     }
 
-    HashMap<String, Upgrades> empty = new HashMap<>();
+    private HashMap<String, Upgrades> empty = new HashMap<>();
+
+
+    private Notifier notifier = new Notifier();
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 //        if(car.isUpgraded == 1) {
@@ -124,7 +130,7 @@ public class MenuController implements Initializable{
                     if(cars[i].title.equals(listView.getSelectionModel().getSelectedItem())) {
                         selCar_title.setText(cars[i].title);
                         selCar_Reward.setText(Double.toString(round(cars[i].rewardForRace(),2)));
-                        selCar_Money.setText("+" + Double.toString(round(cars[i].rewardForRace() / (cars[i].upgradeCost() * 3),2)));
+                        selCar_Money.setText("+" + Double.toString(round(cars[i].getMoneyIncOnClick(),2)));
                         selCar_acceleration.setProgress(cars[i].acceleration / 100);
                         selCar_maxSpeed.setProgress(cars[i].maxSpeed / 100);
                         selCar_brakes.setProgress(cars[i].brakes / 100);
@@ -138,13 +144,13 @@ public class MenuController implements Initializable{
         tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> ov, Number oldValue, Number newValue) {
-                listView.getItems().clear();
                 cars = computeCars();
             }
         });
     }
 
     public Car[] computeCars() {
+        listView.getItems().clear();
         if(u.moneyOnPush <= 0.21) {
             listView.getItems().addAll("Renault", "Ferrari", "Mercedes","RedBull");
             return new StockCar[]{new StockCar("Renault", 20, 40, 30,0, empty),
@@ -164,37 +170,40 @@ public class MenuController implements Initializable{
         if(u.auth) {
             Car[] cars = computeCars();
             for (int i = 0; i < cars.length; i++) {
-                if (u.enough(cars[i].price()) && cars[i].title.equals(selCar_title.getText())) {
-                    u.money -= cars[i].price();
-                    money.setText(Double.toString(round(u.money, 2)));
-                    u.moneyOnPush += cars[i].rewardForRace() / (cars[i].upgradeCost() * 3);
-                    try {
-                        if (car == null)
-                            menuModel.newCar(cars[i], u.getUsername());
-                        else
-                            menuModel.updateCar(cars[i], u.getUsername());
-                    } catch (SQLException e1) {
-                        e1.printStackTrace();
-                    }
-                    setCar(cars[i]);
-                    this.moneyOP.setText(Double.toString(round(u.moneyOnPush, 2)));
-                    upgrade.setDisable(false);
-                    setState(new CarState());
-                    getState().resetView(toRace, curCar_title);
-                    break;
-                } else {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Information Dialog");
-                    alert.setHeaderText("You dont have enough money to buy this car");
+                if (cars[i].title.equals(selCar_title.getText())) {
+                    if (u.enough(cars[i].price())) {
+                        u.money -= cars[i].price();
+                        money.setText(Double.toString(round(u.money, 2)));
+                        u.moneyOnPush += cars[i].getMoneyIncOnClick();
+                        moneyOP.setText(Double.toString(round(u.moneyOnPush, 2)));
 
-                    alert.showAndWait();
+                        try {
+                            if (car == null)
+                                menuModel.newCar(cars[i], u.getUsername());
+                            else
+                                menuModel.updateCar(cars[i], u.getUsername());
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        setCar(cars[i]);
+                        upgrade.setDisable(false);
+
+                        setState(new CarState());
+                        getState().resetView(toRace, curCar_title, pane);
+                        break;
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Dialog");
+                        alert.setHeaderText("You dont have enough money to buy this car");
+                        alert.showAndWait();
+                    }
                 }
             }
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
             alert.setHeaderText("Login or Sign up please if you want to buy");
-
             alert.showAndWait();
         }
     }
@@ -210,7 +219,7 @@ public class MenuController implements Initializable{
         } else {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Information Dialog");
-            alert.setHeaderText("You dont have enough money upgrade your car");
+            alert.setHeaderText("You don't have enough money to upgrade your car");
 
             alert.showAndWait();
         }
@@ -221,6 +230,18 @@ public class MenuController implements Initializable{
         this.money.setText(Double.toString(round(user.money,2)));
         this.moneyOP.setText(Double.toString(round(user.moneyOnPush,2)));
         this.u = user;
+        this.selCar_title.setText("Select car");
+        if(!user.auth) {
+            Observer buttons = new ObsButtons(this.toRace,this.upgrade);
+            Observer buttons2 = new ObsButtons(this.tiresBtn,this.spoilerBtn);
+            Observer buttons3 = new ObsButtons(this.nitroBtn,null);
+            Observer labels = new ObsLabels(this.timeLabel,this.curCar_title);
+            notifier.attach(buttons);
+            notifier.attach(buttons2);
+            notifier.attach(buttons3);
+            notifier.attach(labels);
+            notifier.notifyAllObservers("Not authorized");
+        }
     }
 
     public void setCar(Car car) {
@@ -231,7 +252,7 @@ public class MenuController implements Initializable{
     public void rewriteCarData(Car car) {
         curCar_title.setText(car.title);
         curCar_Reward.setText(Double.toString(round(car.rewardForRace(),2)));
-        curCar_Money.setText("+" + Double.toString(round(car.rewardForRace() / (car.upgradeCost()*3),2)));
+        curCar_Money.setText("+" + Double.toString(round(car.getMoneyIncOnClick(),2)));
         curCar_acceleration.setProgress(car.acceleration / 100);
         curCar_maxSpeed.setProgress(car.maxSpeed / 100);
         curCar_brakes.setProgress(car.brakes / 100);
@@ -255,26 +276,28 @@ public class MenuController implements Initializable{
         this.money.setText(Double.toString(round(u.money,2)));
     }
 
-    private int seconds = 10;
+    private int seconds = 5;
 
     public void toRace(ActionEvent e) {
-        // loop with freeze
-        toRace.setDisable(true);
-        getMoney.setDisable(true);
-        Timeline time= new Timeline();
-        KeyFrame frame= new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>(){
+        Observer buttons = new ObsButtons(this.toRace,this.getMoney);
+        Observer labels = new ObsLabels(this.moneyOP,this.curCar_Reward);
+        notifier.attach(buttons);
+        notifier.attach(labels);
+        notifier.notifyAllObservers("Car is in race");
+        Timeline time = new Timeline();
+        KeyFrame frame = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>(){
 
             @Override
             public void handle(ActionEvent event) {
                 seconds--;
                 timeLabel.setText("Countdown: "+Integer.toString(seconds));
                 if(seconds<=0){
-                    toRace.setDisable(false);
-                    getMoney.setDisable(false);
+                    notifier.notifyAllObservers("");
                     u.money += car.rewardForRace();
+                    getMoney.setText((Double.toString(round(u.moneyOnPush,2))));
                     money.setText(Double.toString(round(u.money,2)));
                     timeLabel.setText("");
-                    seconds = 10;
+                    seconds = 5;
                     time.stop();
                 }
             }
@@ -323,7 +346,7 @@ public class MenuController implements Initializable{
             Pane root = loader.load(getClass().getResource("sample.fxml").openStream());
 
             primaryStage.setTitle("Formula1 Simulator");
-            primaryStage.setScene(new Scene(root, 300, 275));
+            primaryStage.setScene(new Scene(root));
             primaryStage.show();
         } catch (IOException e1) {
             e1.printStackTrace();

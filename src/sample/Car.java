@@ -1,12 +1,9 @@
 package sample;
 
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class Car {
     public String title;
-    //public String pic;
     public double acceleration;
     public double maxSpeed;
     public double brakes;
@@ -31,6 +28,10 @@ public abstract class Car {
 
     public double CalculateCarPoints() {
         return st.CalculatePoints(acceleration,maxSpeed,brakes);
+    }
+
+    public double getMoneyIncOnClick() {
+        return rewardForRace() / (upgradeCost() * 3);
     }
 
     abstract public void upgrade();
