@@ -98,7 +98,7 @@ public class MenuController implements Initializable{
     public User u;
     public Car car;
 
-    private Car[] cars;
+    protected Car[] cars;
 
     private State state;
 
@@ -110,7 +110,7 @@ public class MenuController implements Initializable{
         return state;
     }
 
-    private HashMap<String, Upgrades> empty = new HashMap<>();
+    protected HashMap<String, Upgrades> empty = new HashMap<>();
 
 
     private Notifier notifier = new Notifier();
@@ -149,7 +149,7 @@ public class MenuController implements Initializable{
         });
     }
 
-    public Car[] computeCars() {
+    protected Car[] computeCars() {
         listView.getItems().clear();
         if(u.moneyOnPush <= 0.21) {
             listView.getItems().addAll("Renault", "Ferrari", "Mercedes","RedBull");
@@ -294,7 +294,7 @@ public class MenuController implements Initializable{
                 if(seconds<=0){
                     notifier.notifyAllObservers("");
                     u.money += car.rewardForRace();
-                    getMoney.setText((Double.toString(round(u.moneyOnPush,2))));
+                    moneyOP.setText((Double.toString(round(u.moneyOnPush,2))));
                     money.setText(Double.toString(round(u.money,2)));
                     timeLabel.setText("");
                     seconds = 5;
